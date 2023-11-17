@@ -90,10 +90,6 @@ function drawCircle (x, y, r, config) {
     // pop()
 }
 
-function drawCircleStroked(x, y, r, divisions, strokeWeight) {
-
-}
-
 /**
  * Draw line per point, so you can distort individual points
  *
@@ -168,6 +164,36 @@ function drawLine(props) {
     }
 }
 
+/**
+ * To draw a stroked line, calculate the start and end points of the parallel lines
+ */
+function drawLineStroked({ weight, ...props }) {
+    const { x1, x2, y1, y2 } = props;
+
+    // Calculate the slope of the original line
+    const slope = (y2 - y1) / (x2 - x1);
+
+    // Calculate the perpendicular slope
+    const perpendicularSlope = slope === Infinity || slope === 0 ? 0 : -1 / slope;
+
+    // Loop over every parallel line from -weight/2 to weight/2
+    for (let d = -floor(weight * 0.5); d <= floor(weight * 0.5); d++) {
+        // Calculate unit vector components
+        let unitX = d / Math.sqrt(1 + perpendicularSlope ** 2);
+        let unitY = perpendicularSlope * unitX;
+
+        // Calculate the starting point (x3, y3)
+        let x3 = x1 + unitX;
+        let y3 = y1 + unitY;
+
+        // Calculate the ending point (x4, y4)
+        let x4 = x2 + unitX;
+        let y4 = y2 + unitY;
+
+        drawLine({ ...props, x1: x3, y1: y3, x2: x4, y2: y4 });
+    }
+}
+
 
 /**
  * Simple helper function to providing a probability which returns true or false using random
@@ -222,5 +248,28 @@ function sampleArrayNoise (x = null, y = null, array = []) {
     }
 
     const noiseIdx = ceil(noiseVal * array.length) - 1
-    return array[noise]
+    return array[noiseIdx]
 }
+
+/**
+ * Samples a random point on a given line
+ * @param {*} x1 
+ * @param {*} y1 
+ * @param {*} x2 
+ * @param {*} y2 
+ * @returns p5.Vector with the random point
+ */
+function getRandomPointOnLine(x1, y1, x2, y2) {
+    // Generate a random value between 0 and 1
+    console.log('making random line', x1, y1, x2, y2);
+
+    let t = random();
+    
+    // Use the random value to interpolate between the two points
+    let x = lerp(x1, x2, t);
+    let y = lerp(y1, y2, t);
+
+    
+    // Return the random point
+    return createVector(x, y);
+  }
