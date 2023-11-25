@@ -12,11 +12,11 @@ let topLeft, topRight, bottomLeft, bottomRight
 const TOTAL_FRAMES = 1000
 
 function setup() {
-    palette = palette8 // Pick palette
+    palette = palette1 // Pick palette
     frameRate(60)
     // Setup canvas // 3840 x 2160 for hi-res
     createCanvas(3000, 4000, P2D);
-    // colorMode(ADD)
+    colorMode(ADD)
     // createCanvas(1000, 1000)
     background(palette.bg)
 
@@ -33,8 +33,8 @@ function setup() {
     bottomLeft = createVector(borderWidth, height - borderWidth)
 
     d = width * 0.025 * random(-1, 1)
-    insideTopLevel = 10
-    outsideTopLevel = 6
+    insideTopLevel = 8
+    outsideTopLevel = 4
 
     randomRect = new RandomRect({
         insideLevel: insideTopLevel,

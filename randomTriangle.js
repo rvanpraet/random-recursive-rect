@@ -10,6 +10,7 @@ class RandomTriangle {
         this.isTopLevel = isTopLevel
         this.drawingMethod = drawingMethod
         this.fillColor = sampleArray(palette.colors)
+        this.pointsInside = []
 
         this.offsetMultiplier = map(this.insideLevel, insideTopLevel, 1, 1, 0.2)
         this.offsetMultiplierOutside = map(this.outsideLevel, outsideTopLevel, 1, 1, 0.2)
@@ -121,7 +122,7 @@ class RandomTriangle {
         }
 
         // this._checkOutsideRecursion()
-        if (chance(0.35)) {
+        if (chance(0.66)) {
             this._checkOutsideRecursion()
         }
 
@@ -143,12 +144,38 @@ class RandomTriangle {
             probability: 0.05
         })
 
+        // Fill the triangle
         if (this.posHistory.a && this.posHistory.b && this.posHistory.c) {
-            push()
-            noStroke()
-            fill(colorAlpha(this.fillColor, 0.01))
-            triangle(this.posHistory.a.x, this.posHistory.a.y, this.posHistory.b.x, this.posHistory.b.y, this.posHistory.c.x, this.posHistory.c.y)
-            pop()
+
+            if (!this.pointsInside.length) {
+                this.pointsInside = getPointsInsideTriangle(this.posHistory.a, this.posHistory.b, this.posHistory.c)
+            } else {
+                const maxAlpha = map(this.insideLevel * this.outsideLevel, insideTopLevel * outsideTopLevel, 1, 0.02, 0.3)
+                const probability = map(this.insideLevel * this.outsideLevel, insideTopLevel * outsideTopLevel, 1, 0.0075, 0.05)
+                this.pointsInside.forEach(p => {
+                    if (chance(probability)) {
+                        push()
+                        noStroke()
+                        fill(colorAlpha(this.fillColor, random(0.01, maxAlpha)))
+                        ellipse(p.x, p.y, random(3, 6))
+                        pop()
+                    }
+
+                })
+            }
+
+            // const area = calculateTriangleArea(this.posHistory.a, this.posHistory.b, this.posHistory.c)
+            // let alpha = area * 0.0001
+            // alpha = constrain(alpha, 0.5, 0.1)
+
+            // console.log(area)
+            // console.log(alpha)
+
+            // push()
+            // noStroke()
+            // fill(colorAlpha(this.fillColor, alpha))
+            // triangle(this.posHistory.a.x, this.posHistory.a.y, this.posHistory.b.x, this.posHistory.b.y, this.posHistory.c.x, this.posHistory.c.y)
+            // pop()
         }
 
         // A final update

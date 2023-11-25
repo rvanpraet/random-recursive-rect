@@ -371,3 +371,66 @@ function offsetPointOnLine(pointP, point1, point2, offset) {
 
     return offsetPoint;
 }
+
+/**
+ * Calculates the surface area of a triangle
+ * @param {p5.Vector} v1 The first point of the triangle
+ * @param {p5.Vector} v2 The second point of the triangle
+ * @param {p5.Vector} v3 The third point of the triangle
+ * @returns {number} The numeric value of surface area of the triangle
+ */
+function calculateTriangleArea(v1, v2, v3) {
+    // Shoelace Formula
+    return abs((v1.x * (v2.y - v3.y) + v2.x * (v3.y - v1.y) + v3.x * (v1.y - v2.y)) / 2);
+}
+
+// Function to get all points inside a triangle
+function getPointsInsideTriangle(p1, p2, p3) {
+    let points = [];
+
+    // Find the bounding box of the triangle
+    let minX = min(p1.x, p2.x, p3.x);
+    let minY = min(p1.y, p2.y, p3.y);
+    let maxX = max(p1.x, p2.x, p3.x);
+    let maxY = max(p1.y, p2.y, p3.y);
+
+    // Iterate through points only inside the bounding box
+    for (let x = minX; x <= maxX; x += 5) {
+      for (let y = minY; y <= maxY; y += 5) {
+        let point = createVector(x, y);
+
+        // Check if the point is inside the triangle
+        if (pointInTriangle(point, p1, p2, p3)) {
+          points.push(point.copy());
+        }
+      }
+    }
+
+    return points;
+}
+
+// Function to check if a point is inside a triangle
+function pointInTriangle(point, p1, p2, p3) {
+    let barycentric = getBarycentricCoordinates(point, p1, p2, p3);
+    return (barycentric.x >= 0 && barycentric.y >= 0 && barycentric.z >= 0);
+}
+
+// Function to get the barycentric coordinates of a point in a triangle
+function getBarycentricCoordinates(point, p1, p2, p3) {
+    let v0 = p5.Vector.sub(p3, p1);
+    let v1 = p5.Vector.sub(p2, p1);
+    let v2 = p5.Vector.sub(point, p1);
+
+    let dot00 = v0.dot(v0);
+    let dot01 = v0.dot(v1);
+    let dot02 = v0.dot(v2);
+    let dot11 = v1.dot(v1);
+    let dot12 = v1.dot(v2);
+
+    let invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+    let u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    let v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+    let w = 1 - u - v;
+
+    return createVector(u, v, w);
+}

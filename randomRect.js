@@ -27,8 +27,8 @@ class RandomRect {
         this.dirBottom = 1
         this.dirLeft = 1
 
-        this.fromPos = getRandomPointOnLine(this.topBound.x1, this.topBound.y1, this.topBound.x2, this.topBound.y2)
-        // this.fromPos = findMidpoint(this.boundPoints.topLeft, this.boundPoints.topRight)
+        // this.fromPos = getRandomPointOnLine(this.topBound.x1, this.topBound.y1, this.topBound.x2, this.topBound.y2)
+        this.fromPos = findMidpoint(this.boundPoints.topLeft, this.boundPoints.topRight)
         // this.fromPos = findMidpointWithOffset(this.boundPoints.topLeft, this.boundPoints.topRight, this.pointOffset)
         this.toPos = null
 
@@ -39,8 +39,8 @@ class RandomRect {
         // We're on top, go right
         if (this.nextBound === 'right') {
             if (!this.posHistory.right) {
-                this.toPos = getRandomPointOnLine(this.rightBound.x1, this.rightBound.y1, this.rightBound.x2, this.rightBound.y2)
-                // this.toPos = findMidpoint(this.boundPoints.topRight, this.boundPoints.bottomRight)
+                // this.toPos = getRandomPointOnLine(this.rightBound.x1, this.rightBound.y1, this.rightBound.x2, this.rightBound.y2)
+                this.toPos = findMidpoint(this.boundPoints.topRight, this.boundPoints.bottomRight)
                 // this.toPos = findMidpointWithOffset(this.boundPoints.topRight, this.boundPoints.bottomRight, this.pointOffset)
                 this.posHistory.right = this.toPos
             } else {
@@ -65,8 +65,8 @@ class RandomRect {
         // We're right, go bottom
         else if (this.nextBound === 'bottom') {
             if (!this.posHistory.bottom) {
-                this.toPos = getRandomPointOnLine(this.bottomBound.x1, this.bottomBound.y1, this.bottomBound.x2, this.bottomBound.y2)
-                // this.toPos = findMidpoint(this.boundPoints.bottomRight, this.boundPoints.bottomLeft)
+                // this.toPos = getRandomPointOnLine(this.bottomBound.x1, this.bottomBound.y1, this.bottomBound.x2, this.bottomBound.y2)
+                this.toPos = findMidpoint(this.boundPoints.bottomRight, this.boundPoints.bottomLeft)
                 // this.toPos = findMidpointWithOffset(this.boundPoints.bottomRight, this.boundPoints.bottomLeft, this.pointOffset)
                 this.posHistory.bottom = this.toPos
             } else {
@@ -91,8 +91,8 @@ class RandomRect {
         // We're bottom, go left
         else if (this.nextBound === 'left') {
             if (!this.posHistory.left) {
-                this.toPos = getRandomPointOnLine(this.leftBound.x1, this.leftBound.y1, this.leftBound.x2, this.leftBound.y2)
-                // this.toPos = findMidpoint(this.boundPoints.bottomLeft, this.boundPoints.topLeft)
+                // this.toPos = getRandomPointOnLine(this.leftBound.x1, this.leftBound.y1, this.leftBound.x2, this.leftBound.y2)
+                this.toPos = findMidpoint(this.boundPoints.bottomLeft, this.boundPoints.topLeft)
                 // this.toPos = findMidpointWithOffset(this.boundPoints.bottomLeft, this.boundPoints.topLeft, this.pointOffset)
 
                 this.posHistory.left = this.toPos
@@ -118,8 +118,8 @@ class RandomRect {
         // We're left, go top
         else if (this.nextBound === 'top') {
             if (!this.posHistory.top) {
-                this.toPos = createVector(floor(random(this.leftBound, this.rightBound)), this.topBound)
-                // this.toPos = findMidpoint(this.boundPoints.topLeft, this.boundPoints.topRight)
+                // this.toPos = createVector(floor(random(this.leftBound, this.rightBound)), this.topBound)
+                this.toPos = findMidpoint(this.boundPoints.topLeft, this.boundPoints.topRight)
                 // this.toPos = findMidpointWithOffset(this.boundPoints.topLeft, this.boundPoints.topRight, this.pointOffset)
                 this.posHistory.top = this.toPos
             } else {
