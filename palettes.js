@@ -1,7 +1,7 @@
 const palette1 = {
     bg: '#000',
     contrast: '#A5E6BA',
-    dark: '#232C33',
+    dark: '#7C8483',
     colors: [
         '#7C8483', // Battleship grey
         '#F06543', // Orange soda
@@ -42,7 +42,7 @@ const palette4 = {
     // contrast: '#68A691', // Blueish
     // contrast: '#EAFDF8', // Azure white
     contrast: '#83B692', // Cambridge greenblue
-    dark: '#6C3428',  
+    dark: '#6C3428',
     colors: [
         '#6C3428',
         '#BA704F',
@@ -61,6 +61,47 @@ const palette5 = {
         '#445D48',
         '#D6CC99',
         '#FDE5D4',
+    ]
+}
+
+const palette6 = {
+    // bg: '#fffff2',
+    bg: '#000',
+    // contrast: '#994636',
+    contrast: '#EAFDF8',
+    colors: [
+        '#CACAAA',
+        '#EEC584',
+        '#C8AB83',
+        '#55868C',
+    ]
+}
+
+const palette7 = {
+    bg: '#F2F7F2',
+    // bg: '#000',
+    // contrast: '#120D31',
+    contrast: '#EAFDF8',
+    colors: [
+        '#5E0035',
+        '#498C8A',
+        '#4D4730',
+        '#BB4430',
+    ]
+}
+
+
+const palette8 = {
+    // bg: '#F2F7F2',
+    bg: '#000',
+    // contrast: '#120D31',
+    contrast: '#EAFDF8',
+    colors: [
+        '#D1A343',
+        '#8B2832',
+        // '#EC9192',
+        '#4E938D',
+        '#3C5D5B',
     ]
 }
 

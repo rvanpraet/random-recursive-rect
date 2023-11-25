@@ -3,43 +3,77 @@ let cols
 let palette
 let borderWidth = 100
 let randomRect
+let randomTriangle
+let insideTopLevel
+let outsideTopLevel
+let padding
 let leftBound, rightBound, topBound, bottomBound
 let topLeft, topRight, bottomLeft, bottomRight
 const TOTAL_FRAMES = 1000
 
 function setup() {
-    palette = palette5 // Pick palette
+    palette = palette8 // Pick palette
     frameRate(60)
     // Setup canvas // 3840 x 2160 for hi-res
-    createCanvas(3000, 3000, P2D);
+    createCanvas(3000, 4000, P2D);
+    // colorMode(ADD)
     // createCanvas(1000, 1000)
     background(palette.bg)
 
 
-    leftBound = borderWidth
-    rightBound = width - borderWidth
-    topBound = borderWidth
-    bottomBound = height - borderWidth
+    padding = borderWidth * 0.32
+    leftBound = borderWidth + padding
+    rightBound = width - borderWidth - padding
+    topBound = borderWidth + padding
+    bottomBound = height - borderWidth - padding
 
     topLeft = createVector(borderWidth, borderWidth)
     topRight = createVector(width - borderWidth, borderWidth)
     bottomRight = createVector(width - borderWidth, height - borderWidth)
     bottomLeft = createVector(borderWidth, height - borderWidth)
 
-    d = width * 0.01
+    d = width * 0.025 * random(-1, 1)
+    insideTopLevel = 10
+    outsideTopLevel = 6
 
     randomRect = new RandomRect({
-        level: 8,
-        d: width * 0.1,
+        insideLevel: insideTopLevel,
+        outsideLevel: outsideTopLevel,
+        d,
         bounds: {
             left: { x1: leftBound, y1: topBound, x2: leftBound, y2: bottomBound },
             right: { x1: rightBound, y1: topBound, x2: rightBound, y2: bottomBound },
             top: { x1: leftBound, y1: topBound, x2: rightBound, y2: topBound },
             bottom: { x1: leftBound, y1: bottomBound, x2: rightBound, y2: bottomBound }
         },
+        boundPoints: {
+            topLeft,
+            topRight,
+            bottomLeft,
+            bottomRight
+        },
         weight: width * 0.01,
         isTopLevel: true
     })
+
+    // randomTriangle = new RandomTriangle({
+    //     insideLevel: insideTopLevel,
+    //     outsideLevel: outsideTopLevel,
+    //     d,
+    //     bounds: {
+    //         a: { x1: leftBound, y1: topBound, x2: leftBound, y2: bottomBound },
+    //         b: { x1: leftBound, y1: topBound, x2: rightBound, y2: topBound },
+    //         c: { x1: rightBound, y1: topBound, x2: rightBound, y2: bottomBound },
+    //         // bottom: { x1: leftBound, y1: bottomBound, x2: rightBound, y2: bottomBound }
+    //     },
+    //     boundPoints: {
+    //         ab: topLeft,
+    //         ac: bottomLeft,
+    //         bc: topRight
+    //     },
+    //     weight: width * 0.005,
+    //     isTopLevel: true
+    // })
 
     // randomRect = new RandomRect({
     //     level: 3,
@@ -56,10 +90,15 @@ function setup() {
 function draw() {
     randomRect.update()
     const hasEnded = randomRect.show()
-    drawBound()
+
+    // randomTriangle.update()
+    // const hasEnded = randomTriangle.show()
+
+    // drawBound()
 
     if (hasEnded) {
         noLoop()
+        save('random_lines.tiff')
     }
 }
 
@@ -71,14 +110,14 @@ function drawBound() {
     // line(topLeft.x, topLeft.y, topRight.x, topRight.y)
     // pop()
 
-    if (frameCount < 10) {
+    if (frameCount < 25) {
         drawLineStroked({
             weight: 30,
             x1: topLeft.x,
             y1: topLeft.y,
             x2: topRight.x,
             y2: topRight.y,
-            color: palette.dark,
+            color: sampleArray(palette.colors),
             alphaRnd: [0.1, 0.35],
             weightRnd: 3,
             probability: 0.1
@@ -90,7 +129,7 @@ function drawBound() {
             y1: topRight.y,
             x2: bottomRight.x,
             y2: bottomRight.y,
-            color: palette.dark,
+            color: sampleArray(palette.colors),
             alphaRnd: [0.1, 0.35],
             weightRnd: 3,
             probability: 0.1
@@ -102,7 +141,7 @@ function drawBound() {
             y1: bottomRight.y,
             x2: bottomLeft.x,
             y2: bottomLeft.y,
-            color: palette.dark,
+            color: sampleArray(palette.colors),
             alphaRnd: [0.1, 0.35],
             weightRnd: 3,
             probability: 0.1
@@ -114,7 +153,7 @@ function drawBound() {
             y1: bottomLeft.y,
             x2: topLeft.x,
             y2: topLeft.y,
-            color: palette.dark,
+            color: sampleArray(palette.colors),
             alphaRnd: [0.1, 0.35],
             weightRnd: 3,
             probability: 0.1

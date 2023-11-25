@@ -168,27 +168,47 @@ function drawLine(props) {
  * To draw a stroked line, calculate the start and end points of the parallel lines
  */
 function drawLineStroked({ weight, ...props }) {
-    const { x1, x2, y1, y2 } = props;
+    const { x1, x2, y1, y2, probability } = props;
 
     // Calculate the slope of the original line
     const slope = (y2 - y1) / (x2 - x1);
 
-    // Calculate the perpendicular slope
+    // Calculate the perpendicular slope -- This does not seem to work for horizontal lines
     const perpendicularSlope = slope === Infinity || slope === 0 ? 0 : -1 / slope;
 
+    let probFactor = 0
+    const end = floor(weight * 0.5)
+    const start = -end
     // Loop over every parallel line from -weight/2 to weight/2
-    for (let d = -floor(weight * 0.5); d <= floor(weight * 0.5); d++) {
-        // Calculate unit vector components
-        let unitX = d / Math.sqrt(1 + perpendicularSlope ** 2);
-        let unitY = perpendicularSlope * unitX;
+    for (let d = start; d <= end; d++) {
+        let unitX
+        let unitY
+
+        // Horizontal line
+        if (floor(y2 - y1) === 0) {
+            unitX = 0
+            unitY = d
+        }
+
+        // All the rest
+        else {
+            // Calculate unit vector components
+            unitX = d / Math.sqrt(1 + perpendicularSlope ** 2);
+            unitY = perpendicularSlope * unitX;
+        }
 
         // Calculate the starting point (x3, y3)
-        let x3 = x1 + unitX;
-        let y3 = y1 + unitY;
+        const x3 = x1 + unitX;
+        const y3 = y1 + unitY;
 
         // Calculate the ending point (x4, y4)
-        let x4 = x2 + unitX;
-        let y4 = y2 + unitY;
+        const x4 = x2 + unitX;
+        const y4 = y2 + unitY;
+
+        // Calculate the probability factor based on the distance from the center
+        // the factor should be 1 in the center and 0 at the edges
+        // const angle = map(d, start, end, 0, TWO_PI)
+        // probFactor = map(abs(sin(angle)), 0, 1, 0.2, 1)
 
         drawLine({ ...props, x1: x3, y1: y3, x2: x4, y2: y4 });
     }
@@ -253,23 +273,101 @@ function sampleArrayNoise (x = null, y = null, array = []) {
 
 /**
  * Samples a random point on a given line
- * @param {*} x1 
- * @param {*} y1 
- * @param {*} x2 
- * @param {*} y2 
+ * @param {*} x1
+ * @param {*} y1
+ * @param {*} x2
+ * @param {*} y2
  * @returns p5.Vector with the random point
  */
 function getRandomPointOnLine(x1, y1, x2, y2) {
     // Generate a random value between 0 and 1
-    console.log('making random line', x1, y1, x2, y2);
 
-    let t = random();
-    
+    let t = random()
+
     // Use the random value to interpolate between the two points
     let x = lerp(x1, x2, t);
     let y = lerp(y1, y2, t);
 
-    
+
     // Return the random point
     return createVector(x, y);
-  }
+}
+
+
+/**
+ * Function to find the midpoint of a line between two given points
+ * @param {p5.Vector} point1
+ * @param {p5.Vector} point2
+ * @returns
+ */
+function findMidpoint(point1, point2) {
+    // Calculate midpoint using the formula
+    let xMid = (point1.x + point2.x) / 2;
+    let yMid = (point1.y + point2.y) / 2;
+
+    // Create a vector to represent the midpoint
+    let midpoint = createVector(xMid, yMid);
+
+    return midpoint;
+}
+
+/**
+ * Function to find midpoint of a line with an offset
+ * @param {p5.Vector} point1
+ * @param {p5.Vector} point2
+ * @param {number} offset
+ * @returns
+ */
+function findMidpointWithOffset(point1, point2, offset) {
+    // Calculate the distance between the two points
+    let distance = dist(point1.x, point1.y, point2.x, point2.y);
+
+    // Ensure maxOffset is within the bounds of the line segment
+    offset = constrain(offset, -distance / 2, distance / 2);
+
+    // Calculate the direction vector of the line
+    let direction = createVector(point2.x - point1.x, point2.y - point1.y);
+
+    // Normalize the direction vector
+    direction.normalize();
+
+    // Scale the direction vector by offset
+    // direction.mult(offset * noise(point1.x * 0.005, point1.y * 0.005));
+    direction.mult(offset);
+
+    // Calculate the midpoint by adding the offset to the midpoint of the line
+    let midpoint = createVector((point1.x + point2.x) / 2 + direction.x, (point1.y + point2.y) / 2 + direction.y);
+
+    return midpoint;
+}
+
+/**
+ * Function to offset a given point on a line towards either the starting point or ending point
+ * @param {p5.Vector} pointP
+ * @param {p5.Vector} point1
+ * @param {p5.Vector} point2
+ * @param {number} offset
+ * @returns
+ */
+function offsetPointOnLine(pointP, point1, point2, offset) {
+    // Calculate the distance between the two points
+    let distance = dist(point1.x, point1.y, point2.x, point2.y);
+
+    // Ensure maxOffset is within the bounds of the line segment
+    offset = constrain(offset, -distance / 2, distance / 2);
+
+    // Calculate the direction vector of the line
+    let direction = createVector(point2.x - point1.x, point2.y - point1.y);
+
+    // Normalize the direction vector
+    direction.normalize();
+
+    // Scale the direction vector by offset
+    // direction.mult(offset * noise(point1.x * 0.005, point1.y * 0.005));
+    direction.mult(offset);
+
+    // Calculate the midpoint by adding the offset to the midpoint of the line
+    let offsetPoint = createVector(pointP.x + direction.x, pointP.y + direction.y);
+
+    return offsetPoint;
+}
